@@ -72,4 +72,33 @@ for ax, degree in zip(axs, degree_values):
 
 plt.savefig("D:\AI_ML_OPS\Projects\poly_model_over_underfitting.png", dpi=300, bbox_inches='tight', facecolor=fig.get_facecolor())
 
+# Add train and test erros into an empty list
+train_errors = []
+test_errors = []
+
+# loop through the degree_values and update the train and test list for the plot
+for degree in degree_values:
+    poly = PolynomialFeatures(degree=degree, include_bias=False)
+    X_train_poly = poly.fit_transform(X_train)
+    X_test_poly = poly.transform(X_test)
+
+    model = LinearRegression()
+    model.fit(X_train_poly, y_train)
+
+    y_train_pred = model.predict(X_train_poly)
+    y_test_pred = model.predict(X_test_poly)
+
+    train_errors.append(mean_squared_error(y_train, y_train_pred))
+    test_errors.append(mean_squared_error(y_test, y_test_pred))
+
+# Plot the fig with the train and test error values.
+plt.figure(figsize=(8,5))
+plt.plot(degree_values, train_errors, marker='o', label='Training Error')
+plt.plot(degree_values, test_errors, marker='o', label='Testing Error')
+plt.xlabel('Polynomial Degree')
+plt.ylabel('Mean Squared Error')
+plt.title('Training vs Testing Error as Polynomial Degree Increases')
+plt.xticks(degree_values)
+plt.legend()
+plt.grid(True)
 plt.show()
